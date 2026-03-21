@@ -1,0 +1,147 @@
+#Gut microbiota promote early-life digestive function in songbirds
+#Brian K. Trevelline
+#16 MAR 2026
+
+```{r message=FALSE, warning=FALSE}
+#Load packages
+library(tidyverse)
+library(cowplot)
+library(lme4)
+library(lmerTest)
+library(Matrix)
+library(afex)
+library(rcompanion)
+library(patchwork)
+library(ggdist)
+library(gghalves)
+library(emmeans)
+library(Cairo)
+library(outliers)
+library(rmarkdown)
+library(knitr)
+```
+
+
+Figure 1 - The gut microbiota promotes early-life digestive development in songbirds
+```{r}
+#FIG.1A - RPCA ORDINATION
+#Import QIIME 2 data output
+rpca.df <- read.csv("GFHOSP_QIIME2_RPCA_FIG1A.csv")
+
+#Plot data
+ggplot(rpca.df, aes(RPCA_Axis1, RPCA_Axis2, fill = Treatment, col = Treatment)) +
+  geom_point(size = 3, alpha = 0.7, shape = 21) +
+  scale_color_manual(values = c("#009E73", "#D55E00", "#0072B2","#000000"), limits=c("AX", "CV","INOC", "BLANK")) +
+  scale_fill_manual(values = c("#009E73", "#D55E00", "#0072B2","#A9A9A9"), limits=c("AX", "CV","INOC","BLANK")) +
+  stat_ellipse(level = 0.95) +
+  xlab("RPCA 1 (72.1%)") +
+  ylab("RPCA 2 (27.9%)") +
+  theme_bw() +
+  theme(axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(fill = "transparent"),
+        legend.title = element_blank(),
+        legend.direction = "vertical",
+        axis.ticks = element_blank(),
+        legend.text = element_text(size = 10),
+        legend.position = c(0.87, 0.2),
+        legend.box.background = element_rect(color = "black", linetype = "solid"),
+        legend.box.margin = margin(-5, -2, -5, -5))
+
+```
+
+
+```{r message=FALSE, warning=FALSE}
+#FIG.1B - CHAO 1 ASV RICHNESS
+#Import CHAO1 AND NESTLING DATA
+chao.df <- read.csv("GFHOSP_QIIME2_Chao1.csv")
+nestling.df <- read.csv("GFHOSP_NESTLING_DATA.csv")
+
+#TEST CHAO1 ACROSS AX, CV, INOC
+chao.df.filtered <-
+  chao.df %>%
+  filter(Treatment != "CTRL")
+
+chao1.test <- lmer(Chao1 ~ Treatment + (1|IndividualID), data = chao.df.filtered)
+emmeans(chao1.test, list(pairwise ~ Treatment), adjust = "fdr")
+
+chao.df.mean <- aggregate(Chao1 ~ IndividualID + Treatment, chao.df.filtered, mean)
+
+#TEST EFFECT OF TREATMENT ON MEAN CHAO1 IN AX AND CV NESTLINGS WITH RANDOM EFFECTS FOR PARENTAGE AND SEX
+chao1.test <- lmer(MeanChao1 ~ Treatment + (1|ParentagePair) + (1|Sex), data = nestling.df)
+chao1.null <-lmer(MeanChao1 ~ 1 + (1|ParentagePair) + (1|Sex), data = nestling.df)
+anova(chao1.test, chao1.null)
+
+ggplot(chao.df.mean, aes(x = Treatment, y = Chao1, fill = Treatment)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.7) +
+  geom_hline(aes(yintercept = 7), col = "#000000", linetype = 2) + #Y intercept value represents max abundance in controls
+  scale_fill_manual(values = c("#009E73","#D55E00", "#0072B2"), limits = c("AX", "CV", "INOC")) +
+  scale_x_discrete(labels = c("AX","CV","INOC")) +
+  scale_y_continuous(limits = c(0,51)) +
+  theme_bw() +
+  annotate("segment", x = 2, xend = 3, y = 49.5, yend = 49.5) +
+  annotate("text", label = "NS", x = 2.5, y = 50.9, size = 3.4) +
+  annotate("segment", x = 1, xend = 2, y = 39.5, yend = 39.5) +
+  annotate("text", label = "*", x = 1.5, y = 39.5, size = 5) +
+  ylab("Mean Chao1 ASV richness") +
+  xlab("") +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 12),
+        legend.position = 'none')
+```
+
+
+```{r}
+#FIG 1C
+#Bacterial Abundance (16S copy number/g intestinal contents)
+
+#Import data
+qpcr.df <- read.csv("SuppTableS4_031326.csv")
+
+#TEST EFFECT OF TREATMENT ON BACTERIAL ABUNDNANCE IN AX, CV, INOC
+qpcr.df.filtered <-
+  qpcr.df %>% 
+  filter(Treatment != "BLANK")
+
+abund.test <- lm(QuantityMeanNGCopyNumberCorrectedPerGramLog10 ~ Treatment, data = qpcr.df.filtered)
+emmeans(abund.test, list(pairwise ~ Treatment), adjust = "fdr")
+
+ggplot(qpcr.df.filtered, aes(x = Treatment, y = as.numeric(QuantityMeanNGCopyNumberCorrectedPerGramLog10), fill = Treatment)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.15, alpha = 0.7) +
+  geom_hline(aes(yintercept = 0.985331395), col = "#000000", linetype = 2) + #Y intercept value represents max abundance in controls
+  scale_fill_manual(values = c("#009E73","#D55E00", "#0072B2"), limits = c("AX", "CV", "INOC")) +
+  scale_x_discrete(labels = c("AX","CV","INOC")) +
+  scale_y_continuous(limits = c(0,6.1)) +
+  ylab(expression(paste("log"["10"], "(mean 16S rRNA copies/g)"))) +
+  theme_bw() +
+  annotate("segment", x = 2, xend = 3, y = 5.9, yend = 5.9) +
+  annotate("text", label = "**", x = 2.5, y = 5.9, size = 5) +
+  annotate("segment", x = 1, xend = 2, y = 4.7, yend = 4.7) +
+  annotate("text", label = "**", x = 1.5, y = 4.7, size = 5) +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 12),
+        legend.position = 'none')
+
+```
+
