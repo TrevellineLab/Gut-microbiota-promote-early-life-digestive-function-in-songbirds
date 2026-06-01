@@ -3,7 +3,9 @@
 This repository contains the supplemental R code and input data used to reproduce Figure 1 and Figure 2 from the manuscript:
 
 **Gut microbiota promote early-life digestive function in songbirds**  
-Brian K. Trevelline
+Brian K. Trevelline et al.
+
+This repo also includes all data files used to generate supplemental figures. 
 
 ## Repository structure
 
