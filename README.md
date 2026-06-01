@@ -36,7 +36,7 @@ This repo also includes all data files used to generate supplemental figures.
     └── output/
         └── [Figure 2 output files]
 
-# Figure 1 supplemental code
+## Figure 1 supplemental code
 
 This folder contains the R code, input data, and output files used to reproduce Figure 1.
 
