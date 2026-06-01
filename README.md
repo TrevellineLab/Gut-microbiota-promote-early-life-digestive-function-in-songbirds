@@ -35,7 +35,7 @@ This repo also includes all data files used to generate supplemental figures.
     │   └── [Figure 2 input files]
     └── output/
         └── [Figure 2 output files]
-
+```
 ## Figure 1 supplemental code
 
 This folder contains the R code, input data, and output files used to reproduce Figure 1.
@@ -50,7 +50,6 @@ Dowload all data files and the R script to your working R directory.
 
 Running the script imports the Figure 1 input data, performs the associated statistical analyses, and writes the Figure 1 panel PDFs.
 
-## Figure 1
 ## What the code does
 
 The Figure 1 script analyzes how gut microbiota treatment is associated with microbiota composition, bacterial richness, bacterial abundance, and intestinal morphology in nestling songbirds.
