@@ -189,6 +189,36 @@ ggsave(filename = "fig.2.x.plot.pdf",
        units = "cm",
        dpi = 600)
 
+### FIG 2E - METABOLOMICS VOLCANO PLOT
+df <- read.csv("MetaboliteVolcano.csv")
+
+fig.2.e.plot <-
+  ggplot(df, aes(x = mean_difference_CV_minus_AX, y = -log10(p_value_group), fill = SigDirectionFC, label = Label)) +
+  geom_vline(xintercept = 0, color = "BLACK", linetype = 1) +
+  geom_hline(yintercept = 1.30102999566, color = "#808080", linetype = 2) +
+  geom_point(alpha = 0.7, shape = 21) +
+  geom_text(hjust=-0.2, vjust=0.5, size =2) +
+  scale_fill_manual(values = c("#009E73","#D55E00","#808080"), limits = c("SigDown", "SigUp", "N")) +
+  theme_bw() +
+  xlab("mean difference CV minus AX") +
+  ylab("-log10(p)") +
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        legend.position = 'none')
+
+ggsave(filename = "fig.2.e.plot.pdf", 
+       plot = fig.2.e.plot,
+       width = 14, 
+       height = 10,
+       units = "cm",
+       dpi = 600)
+
 ### FIGURE 1E INSET
 #Load data frame from Python stats output
 #Define the paired vectors
