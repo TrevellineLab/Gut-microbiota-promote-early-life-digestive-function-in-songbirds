@@ -49,6 +49,7 @@ This repo also includes all data files used to generate supplemental figures.
 │   │   ├── lme_results_all_group_plus_sex_fixed_with_mean_difference.csv
 │   │   └── merged_metabolomics.csv
 |   └── output/
+|       ├── Figure2_organ_mass_LOG10_ANCOVA_lmer_Treatment_by_Sex_with_SIplusLI_no_clutch_color_no_lines_type3_anova.csv
 |       ├── fig.2.a.plot.pdf
 |       ├── fig.2.b.plot.pdf
 |       ├── fig.2.c.plot.pdf
