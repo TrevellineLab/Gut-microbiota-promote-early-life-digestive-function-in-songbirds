@@ -33,16 +33,33 @@ This repo also includes all data files used to generate supplemental figures.
 |   ├── Code_For_Inset.py
 |   ├── Code_For_Metabolite_Differential_Abundance.R
 |   ├── Code_For_VolcanoPlot_Fig2.py
+|   ├── script_for_FDR_correction_for_bile_acids.R
+|   ├── SuppCode_Fig2.R
 |   ├── data/
 │   │   ├── data_normalized_C18_NEG.csv
 │   │   ├── data_normalized_C18_POS.csv
 │   │   ├── data_normalized_HILIC_NEG.csv
 │   │   ├── data_normalized_HILIC_POS.csv
 │   │   ├── SuppTableS4.csv
+│   │   ├── DigestiveOrgans.csv
+│   │   ├── Fig2E_INSET.csv
+│   │   ├── MetaboliteVolcano.csv
+│   │   ├── Metabolomics.csv
+│   │   ├── MorphologyData.csv
+│   │   ├── lme_results_all_group_plus_sex_fixed_with_mean_difference.csv
 │   │   └── merged_metabolomics.csv
 |   └── output/
-|       ├── lme_results_all_group_plus_sex_fixed_with_mean_difference.csv
-|       └── volcano_plot_all_group_plus_sex_fixed_mean_difference.pdf
+|       ├── fig.2.a.plot.pdf
+|       ├── fig.2.b.plot.pdf
+|       ├── fig.2.c.plot.pdf
+|       ├── fig.2.d.plot.pdf
+|       ├── fig.2.e.inset.pdf
+|       ├── fig.2.f.plot.pdf
+|       ├── fig.2.g.plot.pdf
+|       ├── fig.2.h.plot.pdf
+|       ├── fig.2.i.plot.pdf
+|       ├── fig.2.x.plot.pdf
+|       └── fig.2.e.plot
 ├── Supplemental_Figures/
     ├── SuppCode_SuppFigs.R
     ├── data/
