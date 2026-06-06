@@ -164,15 +164,7 @@ fig.2.d.plot.pdf    Pancreas mass
 fig.2.x.plot.pdf    Total intestinal mass
 ```
 
-The second section uses `MetaboliteVolcano.csv` to generate the Figure 2 metabolomics volcano plot. The volcano plot shows log2 fold change on the x-axis and -log10 p-value on the y-axis, with significant metabolites colored according to direction of change.
-
-Output:
-
-```text
-fig.2.e.plot.pdf
-```
-
-The third section uses `Fig2E_INSET.csv` to generate a paired inset plot for Figure 2E. The input is reshaped from wide to long format, plotted as paired AX and CV values, and saved as a PDF.
+The sexond section uses `Fig2E_INSET.csv` to generate a paired inset plot for Figure 2E. The input is reshaped from wide to long format, plotted as paired AX and CV values, and saved as a PDF.
 
 Output:
 
@@ -220,8 +212,6 @@ The script also calculates a combined small-plus-large intestine mass variable:
 ```text
 EmptySIplusLIMassMg
 ```
-
-Individual `NL113` is removed before model fitting.
 
 The script writes Type III ANOVA results for each organ and generates a raw organ-mass violin plot with model-derived treatment significance annotations.
 
@@ -315,7 +305,7 @@ Metabolites with group p-values below 0.05 are plotted as significant. The scrip
 Output:
 
 ```text
-volcano_plot_all_group_plus_sex_fixed_mean_difference.pdf
+fig.2.e.plot.pdf
 ```
 
 ## `script_for_FDR_correction_for_bile_acids.py`
@@ -405,10 +395,4 @@ python script_for_FDR_correction_for_bile_acids.py
 python Code_For_Inset.py
 ```
 
-## Notes
 
-The Figure 2 scripts are intended for figure reproduction and supporting analysis rather than for use as a generalized analysis package. Several plotting parameters, axis limits, colors, significance labels, and output filenames are manually specified to match the final manuscript figure layout.
-
-The organ-mass plotting and organ-mass statistical scripts use related but not identical input files. `SuppCode_Fig2.R` uses `MorphologyData.csv` for the main panel plotting, while `Figure2_log10_ANCOVA_Fisher_within_ParentagePair_100perm.R` uses `DigestiveOrgans.csv` for the log10 ANCOVA and permutation-based aggregate test.
-
-The Python volcano-plot script depends on the CSV produced by the metabolite differential abundance R script. The bile-acid FDR correction script currently uses hard-coded p-value vectors and should be checked against the final Table S7 values before release. The Figure 2E inset plotting in `SuppCode_Fig2.R` depends on `Fig2E_INSET.csv`, while `Code_For_Inset.py` documents and reproduces the paired t-test for the inset comparison.
