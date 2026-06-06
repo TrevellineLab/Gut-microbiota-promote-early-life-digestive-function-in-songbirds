@@ -12,6 +12,8 @@ SuppCode_SuppFigs.R
 
 This script performs statistical analyses and generates publication-ready PDF figure panels for the supplemental results. The analyses include microbiome ordinations, RPCA distance comparisons, ASV transfer-efficiency calculations, histological measurements, organ and body-size morphometrics, growth and feeding trajectories, and metabolomics visualizations.
 
+Fig. S11 is generated using the python script Code_For_Plots_FigS11.py.
+
 ## Overview
 
 The script is organized by supplemental figure. Each section imports the relevant input data, performs any required statistical test or data transformation, generates a figure, and saves the result as a PDF.
@@ -140,12 +142,6 @@ fig.s2.b.plot.pdf
 
 This section tests whether inoculum-recipient status predicts RPCA distance to inoculum samples while accounting for repeated measures or paired structure using a mixed-effects model.
 
-Model:
-
-```r
-Distance ~ InoculaRecipient + (1 | SubjectID1)
-```
-
 Input:
 
 ```text
@@ -213,7 +209,7 @@ This section analyzes gizzard and heart mass using mixed-effects models. Gizzard
 Models:
 
 ```r
-GizzardMassMg ~ Treatment * Sex + TarsusLength + (1 | Parentage)
+GizzardMassMg ~ Treatment + Sex + TarsusLength + (1 | Parentage)
 
 HeartMassMg ~ Treatment + Sex + TarsusLength + (1 | Parentage)
 ```
@@ -265,14 +261,6 @@ This section analyzes daily growth and feeding trajectories for AX and CV nestli
 
 The script first removes day 7 observations because they do not represent a full day of feeding data. It then summarizes body mass and formula intake by day and animal ID. Mixed-effects models test whether treatment, day, or their interaction predicts body mass or formula intake over time.
 
-Models:
-
-```r
-AvgDailyBodyMass ~ Treatment * Day + (1 | AnimalID)
-
-TotalDailyFormulaVolume ~ Treatment * Day + (1 | AnimalID)
-```
-
 Input:
 
 ```text
@@ -316,7 +304,7 @@ fig.s10.d.plot.pdf
 
 ## Supplemental Figure S11: Metabolomics p-value distributions
 
-This section uses Python code embedded within the script to generate histograms of metabolite-level p-values from linear mixed-effects model results. Metabolites are grouped by analysis mode based on their name prefixes.
+This section uses Python code to generate histograms of metabolite-level p-values from linear mixed-effects model results. Metabolites are grouped by analysis mode based on their name prefixes.
 
 Input:
 
@@ -374,10 +362,3 @@ setwd("path/to/Supplemental_Figures")
 source("SuppCode_SuppFigs.R")
 ```
 
-## Notes
-
-The code is written primarily as an analysis and figure-generation script rather than as a package or modular workflow. Several figure annotations, axis limits, colors, and significance labels are specified manually to match the final manuscript figures.
-
-The Python section for Supplemental Figure S11 should be run separately if the script is being executed in a standard R session.
-
-All generated figures are saved as PDF files and are intended for downstream assembly into final supplemental figure layouts.
