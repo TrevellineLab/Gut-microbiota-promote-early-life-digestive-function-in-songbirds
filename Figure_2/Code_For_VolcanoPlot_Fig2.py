@@ -79,7 +79,7 @@ leg.get_frame().set_linewidth(1.0)
 plt.tight_layout()
 
 # Save as PDF
-out_path = "volcano_plot_all_group_plus_sex_fixed_mean_difference.pdf"
+out_path = "fig.2.e.plot.pdf"
 plt.savefig(out_path, format="pdf", bbox_inches="tight")
 plt.close()
 
