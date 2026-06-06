@@ -169,7 +169,7 @@ fig.2.x.plot <-
   #scale_y_continuous(limits = c(0,250), breaks = c(0,100, 200)) +
   theme_bw() +
   #annotate("segment", x = 1, xend = 2, y = 240, yend = 240) +
-  #annotate("text", label = "*", x = 1.5, y = 240, size = 5) +
+  annotate("text", label = "*", x = 1.5, y = 240, size = 5) +
   ylab("Intestinal mass (mg)") +
   xlab("") +
   theme(panel.grid.major.x = element_blank(),
