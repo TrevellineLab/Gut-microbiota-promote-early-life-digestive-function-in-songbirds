@@ -4,7 +4,7 @@ This folder contains the code used to generate Figure 2 and supporting statistic
 
 **Gut microbiota promote early-life digestive function in songbirds**
 
-The scripts in this folder generate the Figure 2 organ-mass panels, metabolomics volcano plot, metabolite inset, bile-acid abundance panels, and supporting mixed-effects model results.
+The scripts in this folder generate the Figure 2 organ-mass panels, metabolomics volcano plot, metabolite inset, bile-acid abundance panels, organ-mass mixed-effects analyses, metabolite differential-abundance results, and bile-acid FDR corrections.
 
 ## Scripts
 
@@ -12,7 +12,6 @@ The scripts in this folder generate the Figure 2 organ-mass panels, metabolomics
 SuppCode_Fig2.R
 Figure2_log10_ANCOVA_Fisher_within_ParentagePair_100perm.R
 Code_For_Metabolite_Differential_Abundance.R
-Code_For_VolcanoPlot_Fig2.py
 Code_For_Inset.py
 script_for_FDR_correction_for_bile_acids.py
 ```
@@ -25,14 +24,15 @@ The Figure 2 workflow has two main components:
    - Compares AX and CV nestlings for liver, intestine, pancreas, and related organ-mass traits.
    - Generates the main organ-mass panels for Figure 2.
    - Fits mixed-effects models that account for body size, sex, and parentage structure.
+   - Performs an aggregate treatment-effect test across digestive organs using Fisher's method with treatment-label permutations within parentage pairs.
 
 2. **Metabolomics analyses**
    - Fits metabolite-level mixed-effects models comparing AX and CV nestlings while adjusting for sex and parentage.
-   - Generates a metabolomics volcano plot.
-   - Performs Benjamini-Hochberg FDR correction for bile-acid p-values within annotation category and analysis mode.
-   - Produces selected metabolite abundance plots and a paired inset plot.
+   - Generates the Figure 2 metabolomics volcano plot directly in R.
+   - Produces selected bile-acid abundance plots and a paired inset plot.
+   - Applies Benjamini-Hochberg FDR correction to bile-acid p-values within annotation category and analysis mode.
 
-The scripts are written primarily in R, with Python used for the volcano plot and inset paired t-test.
+The scripts are written primarily in R, with Python used for the inset paired t-test and bile-acid FDR correction.
 
 ## Recommended run order
 
@@ -40,14 +40,13 @@ Run the scripts in this order if reproducing the full Figure 2 workflow from raw
 
 ```text
 1. Code_For_Metabolite_Differential_Abundance.R
-2. Code_For_VolcanoPlot_Fig2.py
-3. script_for_FDR_correction_for_bile_acids.py
-4. Code_For_Inset.py
-5. Figure2_log10_ANCOVA_Fisher_within_ParentagePair_100perm.R
-6. SuppCode_Fig2.R
+2. script_for_FDR_correction_for_bile_acids.py
+3. Code_For_Inset.py
+4. Figure2_log10_ANCOVA_Fisher_within_ParentagePair_100perm.R
+5. SuppCode_Fig2.R
 ```
 
-`SuppCode_Fig2.R` is the main figure-generation script. Some of its inputs are outputs or manually prepared summaries from the other scripts.
+`SuppCode_Fig2.R` is the main figure-generation script. It generates the organ-mass panels, the metabolomics volcano plot, the Figure 2E inset, and selected bile-acid abundance panels.
 
 ## Required R packages
 
@@ -80,7 +79,7 @@ library(tibble)
 library(ggplot2)
 ```
 
-Some scripts load overlapping sets of packages. The metabolite differential abundance script will attempt to install missing R packages from CRAN.
+Some scripts load overlapping sets of packages. The metabolite differential-abundance script will attempt to install missing R packages from CRAN.
 
 ## Required Python packages
 
@@ -88,8 +87,6 @@ The Python scripts use:
 
 ```python
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from scipy import stats
 from statsmodels.stats.multitest import multipletests
 ```
@@ -108,7 +105,7 @@ merged_metabolomics.csv
 SuppTableS5.xlsx
 ```
 
-The metabolite differential abundance script expects metabolite abundances in `merged_metabolomics.csv` and sample metadata in `SuppTableS5.xlsx`.
+The metabolite differential-abundance script expects metabolite abundances in `merged_metabolomics.csv` and sample metadata in `SuppTableS5.xlsx`.
 
 ## Output files
 
@@ -134,17 +131,13 @@ The organ-mass ANCOVA and Fisher-combined-test script writes model summaries, pe
 Figure2_organ_mass_LOG10_ANCOVA_lmer_Treatment_by_Sex_with_SIplusLI_no_clutch_color_no_lines
 ```
 
-The metabolite differential abundance script writes:
+The metabolite differential-abundance script writes:
 
 ```text
 lme_results_all_group_plus_sex_fixed_with_mean_difference.csv
 ```
 
-The volcano-plot script writes:
-
-```text
-volcano_plot_all_group_plus_sex_fixed_mean_difference.pdf
-```
+The bile-acid FDR correction script prints Benjamini-Hochberg-adjusted q-values for the specified bile-acid p-value sets.
 
 ## Script descriptions
 
@@ -152,7 +145,7 @@ volcano_plot_all_group_plus_sex_fixed_mean_difference.pdf
 
 This is the main Figure 2 plotting script. It imports organ morphology data, metabolomics summary data, and selected metabolite abundance data, then generates the primary Figure 2 panels.
 
-The first section uses `MorphologyData.csv` to plot organ-mass comparisons between AX and CV nestlings. The script removes the outlier individual `NL113` before generating the liver, large intestine, small intestine, and pancreas panels. It also includes an additional intestinal-mass plot.
+The first section uses `MorphologyData.csv` to plot organ-mass comparisons between AX and CV nestlings. The script performs a Grubbs test on liver mass and removes the outlier individual `NL113` before generating the liver, large intestine, small intestine, and pancreas panels. It also includes an additional intestinal-mass plot.
 
 Generated panels include:
 
@@ -164,7 +157,15 @@ fig.2.d.plot.pdf    Pancreas mass
 fig.2.x.plot.pdf    Total intestinal mass
 ```
 
-The sexond section uses `Fig2E_INSET.csv` to generate a paired inset plot for Figure 2E. The input is reshaped from wide to long format, plotted as paired AX and CV values, and saved as a PDF.
+The second section uses `MetaboliteVolcano.csv` to generate the Figure 2 metabolomics volcano plot in R. The updated script uses `mean_difference_CV_minus_AX` on the x-axis and `p_value_group` for the p-value axis. Metabolites are colored according to `SigDirectionFC`, and selected metabolites can be labeled using the `Label` column.
+
+Output:
+
+```text
+fig.2.e.plot.pdf
+```
+
+The third section uses `Fig2E_INSET.csv` to generate a paired inset plot for Figure 2E. The input is reshaped from wide to long format, plotted as paired AX and CV values, and saved as a PDF.
 
 Output:
 
@@ -212,6 +213,8 @@ The script also calculates a combined small-plus-large intestine mass variable:
 ```text
 EmptySIplusLIMassMg
 ```
+
+Individual `NL113` is removed before model fitting.
 
 The script writes Type III ANOVA results for each organ and generates a raw organ-mass violin plot with model-derived treatment significance annotations.
 
@@ -276,48 +279,20 @@ Output:
 lme_results_all_group_plus_sex_fixed_with_mean_difference.csv
 ```
 
-This output is used by the volcano-plot script.
-
-## `Code_For_VolcanoPlot_Fig2.py`
-
-This Python script generates a volcano plot from the metabolite-level mixed-effects model results.
-
-Input:
-
-```text
-lme_results_all_group_plus_sex_fixed_with_mean_difference.csv
-```
-
-The x-axis is the unadjusted mean difference:
-
-```text
-mean_difference_CV_minus_AX
-```
-
-The y-axis is:
-
-```text
--log10(p_value_group)
-```
-
-Metabolites with group p-values below 0.05 are plotted as significant. The script draws a horizontal threshold line at p = 0.05 and a vertical line at zero mean difference.
-
-Output:
-
-```text
-fig.2.e.plot.pdf
-```
+This output can be used to prepare `MetaboliteVolcano.csv`, which is read by `SuppCode_Fig2.R` for the Figure 2E volcano plot.
 
 ## `script_for_FDR_correction_for_bile_acids.py`
 
-This Python script performs Benjamini-Hochberg false-discovery-rate correction for bile-acid metabolite p-values from the linear mixed-effects models comparing CV and AX birds.
+This Python script applies Benjamini-Hochberg FDR correction to bile-acid p-values from the metabolite mixed-effects models.
 
-The script applies FDR correction separately within bile-acid annotation sets and analysis modes. In the provided version, two bile-acid p-value vectors are defined directly in the script:
+The script contains two p-value sets:
 
 ```text
 C18_NEG_BileAcids
 HILIC_NEG_BileAcids
 ```
+
+FDR correction is applied independently to each set, consistent with correction within annotation category and within RPLC-MS/MS or HILIC-MS/MS analysis mode.
 
 The script uses:
 
@@ -325,30 +300,16 @@ The script uses:
 multipletests(pvals, method="fdr_bh")
 ```
 
-to return BH-adjusted q-values in the original p-value order.
+The output is printed to the console as BH-adjusted q-values for each p-value set.
 
-This correction is intended to correspond to the bile-acid subset of the metabolomics results, with uncorrected p-values reported in Table S7.
-
-Inputs:
-
-```text
-Hard-coded bile-acid p-value vectors from Table S7
-```
-
-Output:
-
-```text
-Printed BH-adjusted q-values for each bile-acid set
-```
-
-Note: in the uploaded version, the p-value vectors are named `C18_NEG_BileAcids` and `HILIC_NEG_BileAcids`, but the correction calls use `set1` and `set2`. To run the script as written, define:
+Note: as written, the uploaded script defines `C18_NEG_BileAcids` and `HILIC_NEG_BileAcids`, but calls `bh_correct(set1)` and `bh_correct(set2)`. To run the script directly, replace `set1` and `set2` with the named arrays, or assign:
 
 ```python
 set1 = C18_NEG_BileAcids
 set2 = HILIC_NEG_BileAcids
 ```
 
-before calling `bh_correct()`, or replace `set1` and `set2` directly with the named arrays.
+before applying the correction.
 
 ## `Code_For_Inset.py`
 
@@ -390,7 +351,6 @@ source("SuppCode_Fig2.R")
 Example Python workflow:
 
 ```bash
-python Code_For_VolcanoPlot_Fig2.py
 python script_for_FDR_correction_for_bile_acids.py
 python Code_For_Inset.py
 ```
