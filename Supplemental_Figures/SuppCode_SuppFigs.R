@@ -460,7 +460,7 @@ ggsave(filename = "fig.s6.plot.pdf",
 ### FIG S7 A - Gizzard Mass
 morph.df <- read.csv("MorphologyData.csv")
 
-gizzard.test <- lmer(GizzardMassMg ~ Treatment * Sex + TarsusLength + (1|Parentage), data = morph.df)
+gizzard.test <- lmer(GizzardMassMg ~ Treatment + Sex + TarsusLength + (1|Parentage), data = morph.df)
 summary(gizzard.test)
 
 fig.s7.a.plot <- 
