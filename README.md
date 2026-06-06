@@ -30,11 +30,17 @@ This repo also includes all data files used to generate supplemental figures.
 │       ├── fig.1.g.plot.pdf
 │       └── fig.1.h.plot.pdf
 └── Figure_2/
-    ├── SuppCode_Fig2.R
+|   ├── SuppCode_Fig2.R
+|   ├── data/
+|   │   └── [Figure 2 input files]
+|   └── output/
+|       └── [Figure 2 output files]
+├── Supplemental_Figures/
+    ├── SuppCode_SuppFigs.R
     ├── data/
-    │   └── [Figure 2 input files]
+    │   └── [Supp Figure input files]
     └── output/
-        └── [Figure 2 output files]
+        └── [Supp Figure 2 output files]
 ```
 
 
