@@ -30,17 +30,55 @@ This repo also includes all data files used to generate supplemental figures.
 │       ├── fig.1.g.plot.pdf
 │       └── fig.1.h.plot.pdf
 └── Figure_2/
-|   ├── SuppCode_Fig2.R
+|   ├── Code_For_Inset.py
+|   ├── Code_For_Metabolite_Differential_Abundance.R
+|   ├── Code_For_VolcanoPlot_Fig2.py
 |   ├── data/
-|   │   └── [Figure 2 input files]
+│   │   ├── data_normalized_C18_NEG.csv
+│   │   ├── data_normalized_C18_POS.csv
+│   │   ├── data_normalized_HILIC_NEG.csv
+│   │   ├── data_normalized_HILIC_POS.csv
+│   │   ├── SuppTableS4.csv
+│   │   └── merged_metabolomics.csv
 |   └── output/
-|       └── [Figure 2 output files]
+|       ├── lme_results_all_group_plus_sex_fixed_with_mean_difference.csv
+|       └── volcano_plot_all_group_plus_sex_fixed_mean_difference.pdf
 ├── Supplemental_Figures/
     ├── SuppCode_SuppFigs.R
     ├── data/
-    │   └── [Supp Figure input files]
+    │   ├── ASVRelativeAbundances_Genus.csv
+    │   ├── FeedingGrowthData.csv
+    │   ├── INOC-CV_ASVs.csv
+    │   ├── Metabolomics.csv
+    │   ├── MorphologyData.csv
+    │   ├── NonTransferredASVs.csv
+    │   ├── PLSDA.csv
+    │   ├── RPCAdistancesFIGS2.csv
+    │   ├── RPCAdistancesFIGS3.csv
+    │   ├── RPCAordinationFIGS1.csv
+    |   └── lme_results_all_group_plus_sex_fixed_with_mean_difference.csv
     └── output/
-        └── [Supp Figure 2 output files]
+        ├── fig.s.12.a.plot.pdf
+        ├── fig.s.12.b.plot.pdf
+        ├── fig.s1.plot.pdf
+        ├── fig.s2.a.plot.pdf
+        ├── fig.s2.b.plot.pdf
+        ├── fig.s3.plot.pdf
+        ├── fig.s4.a.plot.pdf
+        ├── fig.s4.b.plot.pdf
+        ├── fig.s6.plot.pdf
+        ├── fig.s7.a.plot.pdf
+        ├── fig.s7.b.plot.pdf
+        ├── fig.s8.a.plot.pdf
+        ├── fig.s8.b.plot.pdf
+        ├── fig.s8.c.plot.pdf
+        ├── fig.s9.a.plot.pdf
+        ├── fig.s9.b.plot.pdf
+        ├── fig.s10.a.plot.pdf
+        ├── fig.s10.b.plot.pdf
+        ├── fig.s10.c.plot.pdf
+        ├── fig.s10.d.plot.pdf
+        └── fig.s11.plot.pdf
 ```
 
 
