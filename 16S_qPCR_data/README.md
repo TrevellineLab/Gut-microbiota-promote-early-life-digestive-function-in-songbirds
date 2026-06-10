@@ -110,10 +110,5 @@ unknown_summary = (
 )
 ```
 
-## Notes and cautions
 
-- Quantity values are standard-curve-derived estimates. Confirm whether they represent DNA mass, copy number, or another exported unit before comparing them across projects.
-- Cq and quantity summaries should be interpreted only after evaluating replicate consistency and NTC behavior.
-- Plate-specific standard curves should be retained in downstream analyses because the standard-curve parameters differ slightly among plates.
-- The PDF reports and `.eds` files should be archived with the CSV to preserve provenance and enable reanalysis.
 
