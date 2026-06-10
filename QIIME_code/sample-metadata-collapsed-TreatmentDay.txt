@@ -1,0 +1,6 @@
+#SampleID	TreatmentDay
+MEC	MEC
+AX-1-2	AX-1-2
+CV-1-2	CV-1-2
+INOC	INOC
+PR-SICONT	PR-SICONT

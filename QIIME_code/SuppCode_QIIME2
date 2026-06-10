@@ -1,0 +1,215 @@
+### SUPPLEMENTAL CODE FOR BIOINFORMATIC ANALYSES IN QIIME2   #################################
+### Gut microbiota promote early-life digestive function in songbirds
+### Brian K. Trevelline
+### 23 MAY 2026
+
+#Activate QIIME2
+source activate qiime2-2023.5
+
+###SEQUENCE IMPORT AND PROCESSING
+#Import data using manifest method
+qiime tools import --type 'SampleData[PairedEndSequencesWithQuality]' --input-path sample-manifest.csv --output-path paired-end-demux.qza --input-format PairedEndFastqManifestPhred33
+
+#Convert paired-end-demux.qza to visualization file
+qiime demux summarize --i-data paired-end-demux.qza --o-visualization paired-end-demux.qzv
+
+#DADA2 R1-R2 paired-end denoising 
+qiime dada2 denoise-paired --i-demultiplexed-seqs paired-end-demux.qza --o-table table --o-representative-sequences rep-seqs --p-n-threads 0 --verbose --o-denoising-stats denoising-stats --p-trunc-len-f 230 --p-trunc-len-r 160
+
+#Visualize DADA2 output
+qiime feature-table summarize --i-table table.qza --o-visualization table.qzv --m-sample-metadata-file sample-metadata.txt
+
+qiime feature-table tabulate-seqs --i-data rep-seqs.qza --o-visualization rep-seqs.qzv
+
+qiime metadata tabulate --m-input-file denoising-stats.qza --o-visualization denoising-stats.qzv
+
+#REMOVE SEQUENCES GREATER THAN +/- 4 NUCELOTIDES FROM EXPECTED LENGTH OF 372NTS
+qiime feature-table filter-seqs --i-data rep-seqs.qza --m-metadata-file rep-seqs.qza --p-where 'length(sequence) BETWEEN 368 AND 376' --o-filtered-data filtered-rep-seqs.qza 
+
+#Visualize FILTER REP SEQS
+qiime feature-table tabulate-seqs --i-data filtered-rep-seqs.qza --o-visualization filtered-rep-seqs.qzv
+
+#ISOLATE DEVIATING ASVS FOR REMOVAL FROM ASV TABLE
+qiime feature-table filter-seqs --i-data rep-seqs.qza --m-metadata-file rep-seqs.qza --p-where 'length(sequence) BETWEEN 368 AND 376' --o-filtered-data deviating-rep-seqs.qza --p-exclude-ids
+
+#Visualize ISOLATED REP SEQS
+qiime feature-table tabulate-seqs --i-data deviating-rep-seqs.qza --o-visualization deviating-rep-seqs.qzv
+
+#Align sequences and generate phylogenetic trees
+qiime alignment mafft   --i-sequences filtered-rep-seqs.qza   --o-alignment aligned-rep-seqs.qza
+
+qiime alignment mask   --i-alignment aligned-rep-seqs.qza   --o-masked-alignment masked-aligned-rep-seqs.qza
+
+qiime phylogeny fasttree   --i-alignment masked-aligned-rep-seqs.qza   --o-tree unrooted-tree.qza
+
+qiime phylogeny midpoint-root   --i-tree unrooted-tree.qza   --o-rooted-tree rooted-tree.qza
+
+#TRAIN CLASSIFER TO 515F-Y/926R USING SILVA
+#Extract reference reads
+qiime feature-classifier extract-reads --i-sequences silva-138-99-seqs.qza --p-f-primer GTGYCAGCMGCCGCGGTAA --p-r-primer CCGYCAATTYMTTTRAGTTT --o-reads ref-seqs.qza
+
+#Train classifier
+qiime feature-classifier fit-classifier-naive-bayes --i-reference-reads ref-seqs.qza --i-reference-taxonomy silva-138-99-tax.qza --o-classifier silva-138-99-515FY-926R-nb-classifier.qza
+
+#Assign taxonomy
+qiime feature-classifier classify-sklearn --i-classifier silva-138-99-515FY-926R-nb-classifier.qza --i-reads filtered-rep-seqs.qza --o-classification taxonomy.qza
+
+qiime metadata tabulate --m-input-file taxonomy.qza --o-visualization taxonomy.qzv
+
+#FILTER OUT DEVIATING ASVS FROM FEATURE TABLE
+qiime feature-table filter-features  --i-table table.qza --m-metadata-file deviating-asvs.txt --p-exclude-ids --o-filtered-table filtered-table.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table.qza --o-visualization filtered-table.qzv --m-sample-metadata-file sample-metadata.txt
+
+#FILTER OUT ALL MITOCHONDRIAL, CHLOROPLAST, AND ARCHAEAL SEQUENCES
+qiime taxa filter-table --i-table filtered-table.qza --i-taxonomy taxonomy.qza --p-exclude archaea,chloroplast,mitochondria,eukaryota --p-include c__ --o-filtered-table filtered-table.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table.qza --o-visualization filtered-table.qzv --m-sample-metadata-file sample-metadata.txt
+
+#Generate taxa barplot for all samples
+qiime taxa barplot --i-table filtered-table.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata.txt --o-visualization taxa-barplot.qzv
+
+#FEATURE TABLE FILTERING
+#FILTER OUT CONTAMINANTS FOUND IN ENVIRONMENTAL CONTROLS (sterile swabs, Zymo buffer, autoclaved water)
+#FILTER SAMPLES TO ONLY CTRL ASVS
+qiime feature-table filter-samples --i-table filtered-table.qza --m-metadata-file sample-metadata.txt --p-where "Treatment ='CTRL'" --o-filtered-table filtered-table-ctrls-only.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-ctrls-only.qza --o-visualization filtered-table-ctrls-only.qzv --m-sample-metadata-file sample-metadata.txt
+
+#FILTER OUT CTRL ASVS FROM FEATURE TABLE
+qiime feature-table filter-features  --i-table filtered-table.qza --m-metadata-file ctrl-asvs.txt --p-exclude-ids --o-filtered-table filtered-table-no-ctrls.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls.qza --o-visualization filtered-table-no-ctrls.qzv --m-sample-metadata-file sample-metadata.txt
+
+#FILTER OUT CONTAMINANTS FOUND IN FORMULA
+#FILTER SAMPLES TO ONLY FOOD ASVS
+qiime feature-table filter-samples --i-table filtered-table-no-ctrls.qza --m-metadata-file sample-metadata.txt --p-where "Treatment ='FOOD'" --o-filtered-table filtered-table-no-ctrls-food-only.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-only.qza --o-visualization filtered-table-no-ctrls-food-only.qzv --m-sample-metadata-file sample-metadata.txt
+
+#FILTER OUT FOOD ASVS FROM FEATURE TABLE
+qiime feature-table filter-features  --i-table filtered-table-no-ctrls.qza --m-metadata-file food-asvs.txt --p-exclude-ids --o-filtered-table filtered-table-no-ctrls-food.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food.qza --o-visualization filtered-table-no-ctrls-food.qzv --m-sample-metadata-file sample-metadata.txt
+
+#ANALYSIS FOR FIG S1
+#RPCA IN GEMELLI
+qiime gemelli rpca --p-max-iterations 100 --i-table filtered-table-no-ctrls-food.qza --o-biplot rpca-ordination-filtered-table-no-ctrls-food.qza --o-distance-matrix rpca-distance-matrix-filtered-table-no-ctrls-food.qza --p-n-components 2
+
+#Visualize RPCA plot
+qiime emperor biplot --i-biplot rpca-ordination-filtered-table-no-ctrls-food.qza --m-sample-metadata-file sample-metadata.txt --m-feature-metadata-file taxonomy.qza --o-visualization rpca-ordination-filtered-table-no-ctrls-food.qzv
+
+#PERMANOVA RPCA by TreatmentDay
+qiime diversity beta-group-significance   --i-distance-matrix rpca-distance-matrix-filtered-table-no-ctrls-food.qza --m-metadata-file sample-metadata.txt  --m-metadata-column TreatmentDay  --o-visualization permanova-rpca-TreatmentDay-rpca-distance-matrix-filtered-table-no-ctrls-food.qzv --p-pairwise
+
+#EXPORT RPCA RESULTS
+qiime tools export --input-path rpca-distance-matrix-filtered-table-no-ctrls-food.qza --output-path exported
+qiime tools export --input-path rpca-ordination-filtered-table-no-ctrls-food.qza --output-path exported
+
+#ANALYSIS FOR FIG 1A AND FIG 1B
+#FILTER OUT ASVS FOUND IN MECONIUM
+#FILTER SAMPLES TO ONLY MECONIUM ASVS
+qiime feature-table filter-samples --i-table filtered-table-no-ctrls-food.qza --m-metadata-file sample-metadata.txt --p-where "Treatment ='MEC'" --o-filtered-table filtered-table-no-ctrls-food-pr-mec-only.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-pr-mec-only.qza --o-visualization filtered-table-no-ctrls-food-pr-mec-only.qzv --m-sample-metadata-file sample-metadata.txt
+
+FILTER OUT ASVS FROM FEATURE TABLE
+qiime feature-table filter-features  --i-table filtered-table-no-ctrls-food.qza --m-metadata-file mec-asvs.txt --p-exclude-ids --o-filtered-table filtered-table-no-ctrls-food-mec.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-mec.qza --o-visualization filtered-table-no-ctrls-food-mec.qzv --m-sample-metadata-file sample-metadata.txt
+
+#ALPHA DIVERSITY WITH CHAO 1 
+qiime diversity-lib alpha-passthrough --i-table filtered-table-no-ctrls-food-mec.qza --p-metric 'chao1' --o-vector chao1.qza
+
+qiime diversity alpha-group-significance --i-alpha-diversity chao1.qza --m-metadata-file sample-metadata.txt  --o-visualization chao1.qzv
+
+#GROUP BY INDIVIDUAL ID
+qiime feature-table group --i-table filtered-table-no-ctrls-food-mec.qza --p-axis "sample" --p-mode "mean-ceiling" --o-grouped-table filtered-table-no-ctrls-food-mec-grouped.qza --m-metadata-file sample-metadata.txt --m-metadata-column "IndividualID"
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-mec-grouped.qza --o-visualization filtered-table-no-ctrls-food-mec-grouped.qzv --m-sample-metadata-file sample-metadata-collapsed.txt
+
+#FILTER SAMPLES TO AX, CV, BLANK, and INOC
+qiime feature-table filter-samples --i-table filtered-table-no-ctrls-food-mec-grouped.qza --m-metadata-file sample-metadata-collapsed.txt --p-where "Treatment ='PR'" --o-filtered-table filtered-table-no-ctrls-food-mec-pr-grouped.qza --p-exclude-ids
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-mec-pr-grouped.qza  --o-visualization filtered-table-no-ctrls-food-mec-pr-grouped.qzv --m-sample-metadata-file sample-metadata-collapsed.txt
+
+#BETADIV WITH RPCA GEMELLI
+qiime gemelli rpca --p-max-iterations 100 --i-table filtered-table-no-ctrls-food-mec-pr-grouped.qza --o-biplot rpca-ordination-filtered-table-no-ctrls-food-mec-pr-grouped.qza --o-distance-matrix rpca-distance-matrix-filtered-table-no-ctrls-food-mec-pr-grouped.qza --p-n-components 2
+
+#Visualize GEMELLI plot
+qiime emperor biplot --i-biplot rpca-ordination-filtered-table-no-ctrls-food-mec-pr-grouped.qza --m-sample-metadata-file sample-metadata-collapsed.txt --m-feature-metadata-file taxonomy.qza --o-visualization rpca-ordination-filtered-table-no-ctrls-food-mec-pr-grouped.qzv
+
+qiime diversity beta-group-significance   --i-distance-matrix rpca-distance-matrix-filtered-table-no-ctrls-food-mec-pr-grouped.qza --m-metadata-file sample-metadata-collapsed.txt  --m-metadata-column Treatment  --o-visualization permanova-rpca-TREATMENT-filtered-table-no-ctrls-food-mec-pr-grouped.qzv --p-pairwise
+
+#EXPORT RPCA RESULTS
+qiime tools export --input-path rpca-distance-matrix-filtered-table-no-ctrls-food-mec-pr-grouped.qza --output-path exported
+qiime tools export --input-path rpca-ordination-filtered-table-no-ctrls-food-mec-pr-grouped.qza --output-path exported
+
+#FILTER OUT ASVS FOUND IN BLANKS
+#FILTER SAMPLES TO ONLY BLANK ASVS
+qiime feature-table filter-samples --i-table filtered-table-no-ctrls-food.qza --m-metadata-file sample-metadata.txt --p-where "Treatment ='BLANK'" --o-filtered-table filtered-table-no-ctrls-food-blank-only.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-blank-only.qza --o-visualization filtered-table-no-ctrls-food-blank-only.qzv --m-sample-metadata-file sample-metadata.txt
+
+#FILTER OUT BLANK ASVS FROM FEATURE TABLE
+qiime feature-table filter-features  --i-table filtered-table-no-ctrls-food.qza --m-metadata-file blank-asvs.txt --p-exclude-ids --o-filtered-table filtered-table-no-ctrls-food-blank.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-blank.qza --o-visualization filtered-table-no-ctrls-food-blank.qzv --m-sample-metadata-file sample-metadata.txt
+
+#FILTER SAMPLES TO MEC, AX-1-2, CV-1-2, INOC, PR
+qiime feature-table filter-samples --i-table filtered-table-no-ctrls-food-blank.qza --m-metadata-file sample-metadata.txt --p-where 'TreatmentDay = "INOC" OR TreatmentDay = "CV-1-2" OR TreatmentDay = "PR-SICONT" OR TreatmentDay = "MEC" OR TreatmentDay = "AX-1-2"' --o-filtered-table filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR.qza --o-visualization filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR.qzv --m-sample-metadata-file sample-metadata.txt
+
+#GROUP BY TREATMENT DAY
+qiime feature-table group --i-table filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR.qza --p-axis "sample" --p-mode "mean-ceiling" --o-grouped-table filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR-grouped-TreatmentDay.qza --m-metadata-file sample-metadata.txt --m-metadata-column "TreatmentDay"
+
+#Visualize grouped table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR-grouped-TreatmentDay.qza  --o-visualization filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR-grouped-TreatmentDay.qzv --m-sample-metadata-file sample-metadata-collapsed-TreatmentDay.txt
+
+#Generate taxa barplot
+qiime taxa barplot --i-table filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR-grouped-TreatmentDay.qza --i-taxonomy taxonomy.qza --m-metadata-file sample-metadata-collapsed-TreatmentDay.txt --o-visualization taxa-barplot-filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR-grouped-TreatmentDay.qzv
+
+#FILTER SAMPLES TO INOC AND CV-1-2 features only
+qiime feature-table filter-samples --i-table filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR.qza --m-metadata-file sample-metadata.txt --p-where 'TreatmentDay = "INOC" OR TreatmentDay = "CV-1-2"' --o-filtered-table filtered-table-no-ctrls-food-blank-CV-1-2-INOC.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-blank-CV-1-2-INOC.qza --o-visualization filtered-table-no-ctrls-food-blank-CV-1-2-INOC.qzv --m-sample-metadata-file sample-metadata.txt
+
+#Transpose feature table
+qiime feature-table transpose --i-table filtered-table-no-ctrls-food-blank-CV-1-2-INOC.qza --o-transposed-feature-table filtered-table-no-ctrls-food-blank-CV-1-2-INOC-transposed.qza
+
+#ADD TAXONOMY TO FEATURE TABLE
+qiime metadata tabulate --m-input-file filtered-table-no-ctrls-food-blank-CV-1-2-INOC-transposed.qza --m-input-file taxonomy.qza  --o-visualization filtered-table-no-ctrls-food-blank-CV-1-2-INOC-transposed-with-taxonomy.qzv
+
+#EXPORT FEATURE TABLE
+qiime tools export --input-path filtered-table-no-ctrls-food-blank-CV-1-2-INOC-transposed-with-taxonomy.qzv --output-path exported
+
+#FILTER SAMPLES TO AX AND MEC features only
+qiime feature-table filter-samples --i-table filtered-table-no-ctrls-food-blank-MEC-AX-CV-INOC-PR.qza --m-metadata-file sample-metadata.txt --p-where 'TreatmentDay = "MEC" OR TreatmentDay = "AX-1-2"' --o-filtered-table filtered-table-no-ctrls-food-blank-AX-1-2-MEC.qza
+
+#Visualize filtered table
+qiime feature-table summarize --i-table filtered-table-no-ctrls-food-blank-AX-1-2-MEC.qza --o-visualization filtered-table-no-ctrls-food-blank-AX-1-2-MEC.qzv --m-sample-metadata-file sample-metadata.txt
+
+#Transpose feature table
+qiime feature-table transpose --i-table filtered-table-no-ctrls-food-blank-AX-1-2-MEC.qza --o-transposed-feature-table filtered-table-no-ctrls-food-blank-AX-1-2-MEC-transposed.qza
+
+#ADD TAXONOMY TO FEATURE TABLE
+qiime metadata tabulate --m-input-file filtered-table-no-ctrls-food-blank-AX-1-2-MEC-transposed.qza --m-input-file taxonomy.qza  --o-visualization filtered-table-no-ctrls-food-blank-AX-1-2-MEC-transposed-with-taxonomy.qzv
+
+#EXPORT FEATURE TABLE
+qiime tools export --input-path filtered-table-no-ctrls-food-blank-AX-1-2-MEC-transposed-with-taxonomy.qzv --output-path exported
+
