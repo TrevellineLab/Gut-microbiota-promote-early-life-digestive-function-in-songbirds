@@ -12,6 +12,8 @@ This repo also includes all data files used to generate supplemental figures.
 ```text
 .
 ├── README.md
+├── QIIME_code/
+├── 16S_qPCR_data/
 ├── Figure_1/
 │   ├── SuppCode_Fig1.R
 │   ├── data/
