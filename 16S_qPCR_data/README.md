@@ -1,6 +1,6 @@
 # 16S qPCR Bacterial DNA Quantification
 
-This folder contains raw and exported results from bacterial 16S qPCR assays run with the Zymo Research Femto™ Bacterial DNA Quantification Kit and analyzed in Applied Biosystems Design & Analysis Software. The assay target in the exported results is `Bacteria`, and the primary analysis output is a well-level CSV table containing Cq values, standard-curve quantities, amplification status, and plate-level standard-curve metrics.
+This folder contains raw and exported results from bacterial 16S qPCR assays run with the Zymo Research Femto™ Bacterial DNA Quantification Kit and analyzed in Applied Biosystems Design & Analysis Software. The analysis output is a well-level CSV table containing Cq values, standard-curve quantities, amplification status, and plate-level standard-curve metrics.
 
 ## Files
 
