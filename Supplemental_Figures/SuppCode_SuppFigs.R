@@ -213,7 +213,7 @@ ggsave(filename = "fig.s4.a.plot.pdf",
 
 ## FIG S4B - PERCENT INOC ASVS SUCCESFULLY TRANSFERRED TO CV NESTLINGS
 ### MATCH ASVS IN INOC AND CONV PAIRS
-asv.df <- read.csv("INOC-CV_ASVs.csv")
+asv.df <- read.csv("INOC-CV-ASVs.csv")
 rownames(asv.df) <- asv.df$FeatureID
 
 #INOCULATIONS
@@ -228,80 +228,80 @@ inoc.2318.total.asvs <- count(asv.df, INOC2318 >= 1)
 
 #INOC2301
 #NL093 = 51.3% TRANSFERRED
-non.trans.asvs.NL093 <- filter(asv.df, INOC2301 >= 1  & NL093 == 0)
-trans.asvs.NL093 <- filter(asv.df, INOC2301 >= 1  & NL093 >= 1)
+non.trans.asvs.NL093 <- filter(asv.df, INOC2301 >= 1  & NL093_1 == 0)
+trans.asvs.NL093 <- filter(asv.df, INOC2301 >= 1  & NL093_1 >= 1)
 trans.eff.NL093 <- nrow(trans.asvs.NL093)/inoc.2301.total.asvs[2,2]
 
 #INOC2301
 #NL094 = 30.7%
-non.trans.asvs.NL094 <- filter(asv.df, INOC2301 >= 1  & NL094 == 0)
-trans.asvs.NL094 <- filter(asv.df, INOC2301 >= 1  & NL094 >= 1)
+non.trans.asvs.NL094 <- filter(asv.df, INOC2301 >= 1  & NL094_1 == 0)
+trans.asvs.NL094 <- filter(asv.df, INOC2301 >= 1  & NL094_1 >= 1)
 trans.eff.NL094 <- nrow(trans.asvs.NL094)/inoc.2301.total.asvs[2,2]
 
 #INOC2311
 #NL107 = 28.8%
-non.trans.asvs.NL107 <- filter(asv.df, INOC2311 >= 1  & NL107 == 0)
-trans.asvs.NL107 <- filter(asv.df, INOC2311 >= 1  & NL107 >= 1)
+non.trans.asvs.NL107 <- filter(asv.df, INOC2311 >= 1  & NL107_1 == 0)
+trans.asvs.NL107 <- filter(asv.df, INOC2311 >= 1  & NL107_1 >= 1)
 trans.eff.NL107 <- nrow(trans.asvs.NL107)/inoc.2311.total.asvs[2,2]
 
 #INOC2317
 #NL118 = 33.3%
-non.trans.asvs.NL118 <- filter(asv.df, INOC2317 >= 1  & NL118 == 0)
-trans.asvs.NL118 <- filter(asv.df, INOC2317 >= 1  & NL118 >= 1)
+non.trans.asvs.NL118 <- filter(asv.df, INOC2317 >= 1  & NL118_2 == 0)
+trans.asvs.NL118 <- filter(asv.df, INOC2317 >= 1  & NL118_2 >= 1)
 trans.eff.NL118 <- nrow(trans.asvs.NL118)/inoc.2317.total.asvs[2,2]
 
 #INOC2302
 #NL123 = 34.2%
-non.trans.asvs.NL123 <- filter(asv.df, INOC2302 >= 1  & NL123 == 0)
-trans.asvs.NL123 <- filter(asv.df, INOC2302 >= 1  & NL123 >= 1)
+non.trans.asvs.NL123 <- filter(asv.df, INOC2302 >= 1  & NL123_1 == 0)
+trans.asvs.NL123 <- filter(asv.df, INOC2302 >= 1  & NL123_1 >= 1)
 trans.eff.NL123 <- nrow(trans.asvs.NL123)/inoc.2302.total.asvs[2,2]
 
 #INOC2302
 #NL124 = 50.0%
-non.trans.asvs.NL124 <- filter(asv.df, INOC2302 >= 1  & NL124 == 0)
-trans.asvs.NL124 <- filter(asv.df, INOC2302 >= 1  & NL124 >= 1)
+non.trans.asvs.NL124 <- filter(asv.df, INOC2302 >= 1  & NL124_1 == 0)
+trans.asvs.NL124 <- filter(asv.df, INOC2302 >= 1  & NL124_1 >= 1)
 trans.eff.NL124 <- nrow(trans.asvs.NL124)/inoc.2302.total.asvs[2,2]
 
 #INOC2305
 #NL141 = 81.8%
-non.trans.asvs.NL141 <- filter(asv.df, INOC2305 >= 1  & NL141 == 0)
-trans.asvs.NL141 <- filter(asv.df, INOC2305 >= 1  & NL141 >= 1)
+non.trans.asvs.NL141 <- filter(asv.df, INOC2305 >= 1  & NL141_2 == 0)
+trans.asvs.NL141 <- filter(asv.df, INOC2305 >= 1  & NL141_2 >= 1)
 trans.eff.NL141 <- nrow(trans.asvs.NL141)/inoc.2305.total.asvs[2,2]
 
 #INOC2305
 #NL143 = 59.1%
-non.trans.asvs.NL143 <- filter(asv.df, INOC2305 >= 1  & NL143 == 0)
-trans.asvs.NL143 <- filter(asv.df, INOC2305 >= 1  & NL143 >= 1)
+non.trans.asvs.NL143 <- filter(asv.df, INOC2305 >= 1  & NL143_1 == 0)
+trans.asvs.NL143 <- filter(asv.df, INOC2305 >= 1  & NL143_1 >= 1)
 trans.eff.NL143 <- nrow(trans.asvs.NL143)/inoc.2305.total.asvs[2,2]
 
 #INOC2305
 #NL146 = 59.1%
-non.trans.asvs.NL146 <- filter(asv.df, INOC2305 >= 1  & NL146 == 0)
-trans.asvs.NL146 <- filter(asv.df, INOC2305 >= 1  & NL146 >= 1)
+non.trans.asvs.NL146 <- filter(asv.df, INOC2305 >= 1  & NL146_1 == 0)
+trans.asvs.NL146 <- filter(asv.df, INOC2305 >= 1  & NL146_1 >= 1)
 trans.eff.NL146 <- nrow(trans.asvs.NL146)/inoc.2305.total.asvs[2,2]
 
 #INOC2306
 #NL151 = 77.8%
-non.trans.asvs.NL151 <- filter(asv.df, INOC2306 >= 1  & NL151 == 0)
-trans.asvs.NL151 <- filter(asv.df, INOC2306 >= 1  & NL151 >= 1)
+non.trans.asvs.NL151 <- filter(asv.df, INOC2306 >= 1  & NL151_1 == 0)
+trans.asvs.NL151 <- filter(asv.df, INOC2306 >= 1  & NL151_1 >= 1)
 trans.eff.NL151 <- nrow(trans.asvs.NL151)/inoc.2306.total.asvs[2,2]
 
 #INOC2306
 #NL152 = 77.8%
-non.trans.asvs.NL152 <- filter(asv.df, INOC2306 >= 1  & NL152 == 0)
-trans.asvs.NL152 <- filter(asv.df, INOC2306 >= 1  & NL152 >= 1)
+non.trans.asvs.NL152 <- filter(asv.df, INOC2306 >= 1  & NL152_2 == 0)
+trans.asvs.NL152 <- filter(asv.df, INOC2306 >= 1  & NL152_2 >= 1)
 trans.eff.NL152 <- nrow(trans.asvs.NL152)/inoc.2306.total.asvs[2,2]
 
 #INOC2318
 #NL158 = 68.8%
-non.trans.asvs.NL158 <- filter(asv.df, INOC2318 >= 1  & NL158 == 0)
-trans.asvs.NL158 <- filter(asv.df, INOC2318 >= 1  & NL158 >= 1)
+non.trans.asvs.NL158 <- filter(asv.df, INOC2318 >= 1  & NL158_2 == 0)
+trans.asvs.NL158 <- filter(asv.df, INOC2318 >= 1  & NL158_2 >= 1)
 trans.eff.NL158 <- nrow(trans.asvs.NL158)/inoc.2318.total.asvs[2,2]
 
 #INOC2304
 #NL165 = 62.5%
-non.trans.asvs.NL165 <- filter(asv.df, INOC2304 >= 1  & NL165 == 0)
-trans.asvs.NL165 <- filter(asv.df, INOC2304 >= 1  & NL165 >= 1)
+non.trans.asvs.NL165 <- filter(asv.df, INOC2304 >= 1  & NL165_1 == 0)
+trans.asvs.NL165 <- filter(asv.df, INOC2304 >= 1  & NL165_1 >= 1)
 trans.eff.NL165 <- nrow(trans.asvs.NL165)/inoc.2304.total.asvs[2,2]
 
 trans.eff <- c(trans.eff.NL093, 
@@ -351,7 +351,6 @@ trans.asvs <- c(rownames(trans.asvs.NL093),
                 rownames(trans.asvs.NL165))
 
 trans.asvs.unique <- unique(trans.asvs)
-#filter(asv.df, FeatureID == trans.asvs.unique)
 transferred.asvs <- merge(data.frame(FeatureID=trans.asvs.unique), asv.df, all.x=TRUE)
 write.csv(transferred.asvs, "TransferredASVs.csv")
 
@@ -375,7 +374,6 @@ non.trans.asvs <- c(rownames(non.trans.asvs.NL093),
                 rownames(non.trans.asvs.NL165))
 
 non.trans.asvs.unique <- unique(non.trans.asvs)
-#filter(asv.df, FeatureID == non.trans.asvs.unique)
 non.transferred.asvs <- merge(data.frame(FeatureID=non.trans.asvs.unique), asv.df, all.x=TRUE)
 write.csv(non.transferred.asvs, "NonTransferredASVs.csv")
 
@@ -460,7 +458,7 @@ ggsave(filename = "fig.s6.plot.pdf",
 ### FIG S7 A - Gizzard Mass
 morph.df <- read.csv("MorphologyData.csv")
 
-gizzard.test <- lmer(GizzardMassMg ~ Treatment + Sex + TarsusLength + (1|Parentage), data = morph.df)
+gizzard.test <- lmer(GizzardMassMg ~ Treatment * Sex + TarsusLength + (1|Parentage), data = morph.df)
 summary(gizzard.test)
 
 fig.s7.a.plot <- 
@@ -902,9 +900,6 @@ ggsave(filename = "fig.s10.d.plot.pdf",
        units = "cm",
        dpi = 600)
 
-
-
-
 ### FIG S12 A - Eicosapentaenoic acid
 df <- read.csv("Metabolomics.csv")
 
@@ -970,6 +965,5 @@ ggsave(filename = "fig.s.12.b.plot.pdf",
        height = 7,
        units = "cm",
        dpi = 300)
-
 
 
