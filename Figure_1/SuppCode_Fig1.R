@@ -70,7 +70,8 @@ chao.df <- read.csv("Chao1.csv")
 #TEST CHAO1 ACROSS AX, CV, INOC
 chao.df.filtered <-
   chao.df %>%
-  filter(Treatment != "CTRL")
+  filter(Treatment != "PR")  %>%
+  filter(Treatment != "BLANK")
 
 #TEST EFFECT OF TREATMENT ON CHAO1 IN AX, CV, INOC
 chao1.test <- lmer(Chao1 ~ Treatment + (1|IndividualID), data = chao.df.filtered)
@@ -119,7 +120,7 @@ ggsave(filename = "fig.1.b.plot.pdf",
 
 #FIG 1C - Bacterial Abundance (16S copy number/g intestinal contents)
 #TEST EFFECT OF TREATMENT ON BACTERIAL ABUNDNANCE IN AX, CV, INOC
-qpcr.df <- read.csv("SuppTableS4.csv")
+qpcr.df <- read.csv("dataS4.csv")
 
 qpcr.df.filtered <-
   qpcr.df %>% 
@@ -194,7 +195,6 @@ fig.1.e.plot <-
   annotate("segment", x = 2.0, xend = 2.3, y = 411.1535, yend = 411.1535) +
   annotate("segment", x = 2.0, xend = 2.3, y = 446.9223, yend = 446.9223) +
   annotate("segment", x = 2.0, xend = 2.3, y = 446.2550, yend = 446.2550) +
-  #annotate("segment", x = 1, xend = 2, y = 990, yend = 990) +
   annotate("text", label = "**", x = 1.5, y = 1000, size = 5) +
   theme_bw() +
   ylab(expression(paste('Villi height (', "\u03bc", 'm)'))) +
@@ -302,7 +302,6 @@ fig.1.g.plot <-
   annotate("segment", x = 2.0, xend = 2.3, y = 51.60546, yend = 51.60546) +
   annotate("segment", x = 2.0, xend = 2.3, y = 55.54546, yend = 55.54546) +
   annotate("segment", x = 2.0, xend = 2.3, y = 93.87913, yend = 93.87913) +
-  #annotate("segment", x = 1, xend = 2, y = 248, yend = 248) +
   annotate("text", label = "*", x = 1.5, y = 250, size = 5) +
   theme_bw() +
   ylab("Mean goblet cells/mm") +
