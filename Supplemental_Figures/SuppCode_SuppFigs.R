@@ -2,7 +2,7 @@
 #SUPPLEMENTAL CODE FOR ANALYSES - SUPPLEMENTAL FIGURES AND SUPPORTING ANALYSES #################################
 #Gut microbiota promote early-life digestive function in songbirds
 #Brian K. Trevelline
-#23 MAY 2026
+#9 JULY 2026
 ################
 
 #Load packages
@@ -21,7 +21,6 @@ library(Cairo)
 library(outliers)
 library(rmarkdown)
 library(knitr)
-
 
 ### SUPPLEMENTAL FIGURE S1 - RPCA ORDINATION OF ALL SAMPLE TYPES AND TIMEPOINTS
 rpca.df <- read.csv("RPCAordinationFIGS1.csv")
@@ -381,6 +380,7 @@ fig.s4.b.plot <-
   ggplot(trans.eff.df, aes(1, TransferEfficiency)) +
   geom_boxplot(outlier.shape = NA, fill = "#999999") +
   geom_jitter(width = 0.1, size = 1.5, alpha = 0.7) +
+  stat_summary(fun.y=mean, geom="crossbar", linewidth = 0.1, linetype = "dashed", fatten = 3, width = 0.75) +
   scale_x_discrete(labels = c("X")) +
   scale_y_continuous(limits = c(0,1), breaks = c(0,0.25,0.50,0.75,1)) +
   theme_bw() +
@@ -399,7 +399,7 @@ fig.s4.b.plot <-
 ggsave(filename = "fig.s4.b.plot.pdf", 
        plot = fig.s4.b.plot,
        device = cairo_pdf,
-       width = 3.5, 
+       width = 4, 
        height = 7,
        units = "cm",
        dpi = 600)
@@ -450,7 +450,7 @@ fig.s6.plot <-
 ggsave(filename = "fig.s6.plot.pdf", 
        plot = fig.s6.plot,
        device = cairo_pdf,
-       width = 5, 
+       width = 8, 
        height = 7.5,
        units = "cm",
        dpi = 600)
@@ -907,16 +907,12 @@ fig.s.12.a.plot <-
   ggplot(df, aes(x = Treatment, y = EicosapentaenoicAcid, fill = Treatment)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.15, alpha = 0.7) +
-  #geom_hline(aes(yintercept = 0.680488996), col = "#000000", linetype = 2) + #Y intercept value represents max abundance in controls
   scale_fill_manual(values = c("#009E73","#D55E00"), limits = c("AX", "CV")) +
   scale_x_discrete(labels = c("AX","CV")) +
   scale_y_continuous(limits = c(4.5,7), breaks = c(5,6,7)) +
-  ylab("Eicosapentaenoic acid") +
+  ylab(expression(-log[10]("EPA rel. intensity"))) +
   theme_bw() +
-  #annotate("segment", x = 1, xend = 2, y = 7, yend = 7) +
   annotate("text", label = "*", x = 1.5, y = 7, size = 5) +
-  #annotate("segment", x = 1, xend = 2, y = 5.4, yend = 5.4) +
-  #annotate("text", label = "**", x = 1.5, y = 5.5, size = 5) +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.x = element_blank(),
@@ -939,16 +935,12 @@ fig.s.12.b.plot <-
   ggplot(df, aes(x = Treatment, y = GlycericAcid, fill = Treatment)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.15, alpha = 0.7) +
-  #geom_hline(aes(yintercept = 0.680488996), col = "#000000", linetype = 2) + #Y intercept value represents max abundance in controls
   scale_fill_manual(values = c("#009E73","#D55E00"), limits = c("AX", "CV")) +
   scale_x_discrete(labels = c("AX","CV")) +
   scale_y_continuous(limits = c(4.5,7), breaks = c(5,6,7)) +
-  ylab("Glyceric acid") +
+  ylab(expression(-log[10]("GA rel. intensity"))) +
   theme_bw() +
-  #annotate("segment", x = 1, xend = 2, y = 7, yend = 7) +
   annotate("text", label = "*", x = 1.5, y = 7, size = 5) +
-  #annotate("segment", x = 1, xend = 2, y = 5.4, yend = 5.4) +
-  #annotate("text", label = "**", x = 1.5, y = 5.5, size = 5) +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.major.y = element_blank(),
         panel.grid.minor.x = element_blank(),
