@@ -75,6 +75,7 @@ This repo also includes all data files used to generate supplemental figures.
     │   ├── Metabolomics.csv
     │   ├── MorphologyData.csv
     │   ├── NonTransferredASVs.csv
+    │   ├── TransferredASVs.csv
     │   ├── PLSDA.csv
     │   ├── RPCAdistancesFIGS2.csv
     │   ├── RPCAdistancesFIGS3.csv
