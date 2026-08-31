@@ -24,6 +24,7 @@ This repo also includes all data files used to generate supplemental figures.
 │   │   ├── NestlingData.csv
 │   │   ├── RPCA.csv
 │   │   ├── dataS4.csv
+│   │   ├── SuppTable4.csv
 │   │   └── VilliMeasurements.csv
 │   └── output/
 │       ├── fig.1.a.plot.pdf
