@@ -2,7 +2,7 @@
 #SUPPLEMENTAL CODE FOR ANALYSES - FIGURE 1
 #Gut microbiota promote early-life digestive function in songbirds
 #Brian K. Trevelline
-#23 MAY 2026
+#6 JULY 2026
 ################
 
 #Load packages
@@ -63,31 +63,31 @@ ggsave(filename = "fig.1.a.plot.pdf",
        units = "cm",
        dpi = 600)
 
-#FIG.1B - CHAO 1 ASV RICHNESS
-#Import CHAO1 DATA
-chao.df <- read.csv("Chao1.csv")
+#FIG.1B - ASV RICHNESS
+#Import ASV RICHNESS DATA
+asv.richness.df <- read.csv("ObservedASVs.csv")
 
 #TEST CHAO1 ACROSS AX, CV, INOC
-chao.df.filtered <-
-  chao.df %>%
+asv.richness.df.filtered <-
+  asv.richness.df %>%
   filter(Treatment != "PR")  %>%
   filter(Treatment != "BLANK")
 
 #TEST EFFECT OF TREATMENT ON CHAO1 IN AX, CV, INOC
-chao1.test <- lmer(Chao1 ~ Treatment + (1|IndividualID), data = chao.df.filtered)
-emmeans(chao1.test, list(pairwise ~ Treatment), adjust = "fdr")
+asv.richness.test <- lmer(ObservedASVs ~ Treatment + (1|IndividualID), data = asv.richness.df.filtered)
+emmeans(asv.richness.test, list(pairwise ~ Treatment), adjust = "fdr")
 
-chao.df.mean <- aggregate(Chao1 ~ IndividualID + Treatment, chao.df.filtered, mean)
+asv.richness.df.filtered.mean <- aggregate(ObservedASVs ~ IndividualID + Treatment, asv.richness.df.filtered, mean)
 
-#Import NESTLING DATA
-nestling.df <- read.csv("NestlingData.csv")
+#Import ASV RICHNESS WITH NESTLING SEX AND PARENTAGE DATA
+asv.richness.nestling.df <- read.csv("NestlingObservedASVs.csv")
 
 #TEST EFFECT OF TREATMENT ON MEAN CHAO1 IN AX AND CV NESTLINGS WITH FIXED EFFECT OF SEX AND RANDOM EFFECT OF PARENTAGE
-chao1.test <- lmer(MeanChao1 ~ Treatment + Sex + (1|Parentage), data = nestling.df)
-summary(chao1.test)
+asv.richness.nestling.test <- lmer(MeanObservedASVs ~ Treatment + Sex + (1|ParentagePair), data = asv.richness.nestling.df)
+summary(asv.richness.nestling.test)
 
 fig.1.b.plot <- 
-  ggplot(chao.df.mean, aes(x = Treatment, y = Chao1, fill = Treatment)) +
+  ggplot(asv.richness.df.filtered.mean, aes(x = Treatment, y = ObservedASVs, fill = Treatment)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.15, alpha = 0.7) +
   geom_hline(aes(yintercept = 7), col = "#000000", linetype = 2) + #Y intercept value represents max abundance in controls
@@ -99,7 +99,7 @@ fig.1.b.plot <-
   annotate("text", label = "NS", x = 2.5, y = 50.9, size = 3.4) +
   annotate("segment", x = 1, xend = 2, y = 39.5, yend = 39.5) +
   annotate("text", label = "*", x = 1.5, y = 39.5, size = 5) +
-  ylab("Mean Chao1 ASV richness") +
+  ylab("Mean ASV richness") +
   xlab("") +
   theme(panel.grid.major.x = element_blank(),
         panel.grid.major.y = element_blank(),
