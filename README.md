@@ -19,9 +19,11 @@ This repo also includes all data files used to generate supplemental figures.
 │   ├── data/
 │   │   ├── Chao1.csv
 │   │   ├── MucosaMeasurements.csv
+│   │   ├── NestlingObservedASVs.csv
+│   │   ├── ObservedASVs.csv
 │   │   ├── NestlingData.csv
 │   │   ├── RPCA.csv
-│   │   ├── SuppTableS4.csv
+│   │   ├── dataS4.csv
 │   │   └── VilliMeasurements.csv
 │   └── output/
 │       ├── fig.1.a.plot.pdf
