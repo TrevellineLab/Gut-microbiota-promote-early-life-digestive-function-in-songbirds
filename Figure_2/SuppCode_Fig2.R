@@ -2,7 +2,7 @@
 #SUPPLEMENTAL CODE FOR ANALYSES - FIGURE 2  #################################
 #Gut microbiota promote early-life digestive function in songbirds
 #Brian K. Trevelline
-#23 MAY 2026
+#6 JULY 2026
 
 #Load packages
 library(tidyverse)
@@ -175,7 +175,7 @@ fig.2.e.plot <-
   geom_vline(xintercept = 0, color = "BLACK", linetype = 1) +
   geom_hline(yintercept = 1.30102999566, color = "#808080", linetype = 2) +
   xlab("Mean difference (CV-AX)") +
-  ylab("-log10(p-value)") +
+  ylab(expression(-log[10](p-value))) +
   scale_y_continuous(limits = c(0.0, 3.05), breaks = c(0.0,0.5,1.0,1.5,2.0,2.5,3.0))+
   scale_x_continuous(limits = c(-0.875,0.875), breaks = c(-0.8,-0.6,-0.4,-0.2,0,0.2,0.4,0.6,0.8)) +
   theme_bw() +
@@ -249,8 +249,8 @@ fig.2.f.plot <-
   geom_jitter(width = 0.15, alpha = 0.7) +
   scale_fill_manual(values = c("#009E73","#D55E00"), limits = c("AX", "CV")) +
   scale_x_discrete(labels = c("AX","CV")) +
-  scale_y_continuous(limits = c(4.5,7), breaks = c(5,6,7)) +
-  ylab("Cholic acid") +
+  scale_y_continuous(limits = c(4.5,7.0), breaks = c(5.0,6.0,7.0)) +
+  ylab(expression(-log[10]("CA rel. intensity"))) +
   theme_bw() +
   annotate("text", label = "**", x = 1.5, y = 7, size = 5) +
   theme(panel.grid.major.x = element_blank(),
@@ -279,7 +279,7 @@ fig.2.g.plot <-
   scale_fill_manual(values = c("#009E73","#D55E00"), limits = c("AX", "CV")) +
   scale_x_discrete(labels = c("AX","CV")) +
   scale_y_continuous(limits = c(4.5,7), breaks = c(5,6,7)) +
-  ylab("Glycholic acid") +
+  ylab(expression(-log[10]("GCA rel. intensity"))) +
   theme_bw() +
   annotate("text", label = "*", x = 1.5, y = 7, size = 5) +
   theme(panel.grid.major.x = element_blank(),
@@ -308,7 +308,7 @@ fig.2.h.plot <-
   scale_fill_manual(values = c("#009E73","#D55E00"), limits = c("AX", "CV")) +
   scale_x_discrete(labels = c("AX","CV")) +
   scale_y_continuous(limits = c(4.5,7), breaks = c(5,6,7)) +
-  ylab("Taurochenodeoxycholic acid") +
+  ylab(expression(-log[10]("TCDCA rel. intensity"))) +
   theme_bw() +
   annotate("text", label = "*", x = 1.5, y = 7, size = 5) +
   theme(panel.grid.major.x = element_blank(),
@@ -337,7 +337,7 @@ fig.2.i.plot <-
   scale_fill_manual(values = c("#009E73","#D55E00"), limits = c("AX", "CV")) +
   scale_x_discrete(labels = c("AX","CV")) +
   scale_y_continuous(limits = c(4.5,7), breaks = c(5,6,7)) +
-  ylab("Beta-muricholic acid") +
+  ylab(expression(-log[10]("BMA rel. intensity"))) +
   theme_bw() +
   annotate("text", label = "*", x = 1.5, y = 7, size = 5) +
   theme(panel.grid.major.x = element_blank(),
